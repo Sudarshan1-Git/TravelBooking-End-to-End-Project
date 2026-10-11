@@ -153,7 +153,6 @@ const PaymentPage = () => {
   };
 
   const brand = detectBrand(card.number);
-  const last4 = card.number.replace(/\s/g,'').slice(-4).padStart(4, '•');
   const inp = (f) => `w-full px-4 py-3 rounded-xl border text-slate-900 text-sm transition-all duration-200 ${
     cardErrors[f] ? 'border-red-400 bg-red-50 input-glow-error' : 'border-slate-200 bg-white input-glow'
   }`;

@@ -46,3 +46,6 @@ Thumbs.db
 .env.production
 *.deb
 .claude/
+
+# React production build
+/frontend/build/

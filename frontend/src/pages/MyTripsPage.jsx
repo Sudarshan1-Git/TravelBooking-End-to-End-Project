@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getUserBookings, cancelBooking } from '../services/bookingService';
-import { formatDate, formatPrice, getStatusColor } from '../utils/helpers';
+import { formatDate, formatPrice } from '../utils/helpers';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 const TABS = [
