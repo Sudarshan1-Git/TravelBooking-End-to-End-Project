@@ -253,8 +253,8 @@ const RegisterPage = () => {
 
           <p className="mt-4 text-center text-xs text-slate-400">
             By creating an account you agree to our{' '}
-            <a href="#" className="text-indigo-500 hover:underline">Terms</a> and{' '}
-            <a href="#" className="text-indigo-500 hover:underline">Privacy Policy</a>
+            <span className="text-indigo-500">Terms</span> and{' '}
+            <span className="text-indigo-500">Privacy Policy</span>
           </p>
         </div>
       </div>

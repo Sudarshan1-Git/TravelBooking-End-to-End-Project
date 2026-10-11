@@ -70,9 +70,9 @@ const App = () => (
                   </p>
                   <div className="flex gap-3 mt-4">
                     {['🐦', '📘', '📸', '▶️'].map((icon, i) => (
-                      <a key={i} href="#" className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-sm transition-colors">
+                      <span key={i} className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-sm transition-colors">
                         {icon}
-                      </a>
+                      </span>
                     ))}
                   </div>
                 </div>
@@ -88,7 +88,7 @@ const App = () => (
                     <ul className="space-y-2.5">
                       {col.links.map(link => (
                         <li key={link}>
-                          <a href="#" className="text-sm text-slate-500 hover:text-white transition-colors">{link}</a>
+                          <span className="text-sm text-slate-500 hover:text-white transition-colors">{link}</span>
                         </li>
                       ))}
                     </ul>

@@ -42,7 +42,7 @@ export const bookFlight = async (data) => {
  * Book a hotel.
  */
 export const bookHotel = async (data) => {
-  const { hotelId, checkIn, checkOut, guests, guestDetails, totalAmount } = data;
+  const { hotelId, checkIn, guests, guestDetails, totalAmount } = data;
   const payload = {
     userId: getStoredUserId(),
     referenceId: hotelId,
