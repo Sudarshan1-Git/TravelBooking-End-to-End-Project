@@ -1,0 +1,123 @@
+
+name: travelbooking
+
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: travelbooking
+      POSTGRES_PASSWORD: ${TB_DB_PASSWORD:?Database password required}
+    volumes:
+      - travelbooking-pgdata:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U travelbooking"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  user-service:
+    build: ./user-service
+    image: travelbooking-user:v1
+    environment:
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_NAME: userdb
+      DB_USER: travelbooking
+      DB_PASSWORD: ${TB_DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET:?JWT secret required}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  search-service:
+    build: ./search-service
+    image: travelbooking-search:v1
+    environment:
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_NAME: searchdb
+      DB_USER: travelbooking
+      DB_PASSWORD: ${TB_DB_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  booking-service:
+    build: ./booking-service
+    image: travelbooking-booking:v1
+    environment:
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_NAME: bookingdb
+      DB_USER: travelbooking
+      DB_PASSWORD: ${TB_DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      USER_SERVICE_URL: http://user-service:3001
+      NOTIFICATION_SERVICE_URL: http://notification-service:3005
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  payment-service:
+    build: ./payment-service
+    image: travelbooking-payment:v1
+    environment:
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_NAME: paymentdb
+      DB_USER: travelbooking
+      DB_PASSWORD: ${TB_DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      BOOKING_SERVICE_URL: http://booking-service:3003
+      NOTIFICATION_SERVICE_URL: http://notification-service:3005
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  notification-service:
+    build: ./notification-service
+    image: travelbooking-notification:v1
+    environment:
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_NAME: notificationdb
+      DB_USER: travelbooking
+      DB_PASSWORD: ${TB_DB_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    image: travelbooking-frontend:v1
+    ports:
+      - "127.0.0.1:8080:80"
+    depends_on:
+      - user-service
+      - search-service
+      - booking-service
+      - payment-service
+      - notification-service
+
+volumes:
+  travelbooking-pgdata:
+    external: true
+
